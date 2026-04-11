@@ -19,15 +19,16 @@ def copy_and_modify_layers(source_model_path, target_model_path, output_model_pa
     # 定义复制的层范围
     copy_ranges = [
         # (源层范围, 目标层范围)
-        ((0, 4), (2, 6)),  # model.0-8 复制到 model.2-10
-        ((0, 0), (10, 10)),  # model.0-8 复制到 model.12-20
-        ((1, 4), (11, 14)),  # model.0-8 复制到 model.12-20
-        ((5, 6), (17, 18)),  # model.0-8 复制到 model.12-20
-        ((5, 6), (19, 20)),  # model.0-8 复制到 model.12-20
-        ((7, 8), (23, 24)),  # model.0-8 复制到 model.12-20
-        ((7, 8), (25, 26)),  # model.0-8 复制到 model.12-20
+        ((0, 4), (2, 6)),  # model.0-4 复制到 model.2-6
 
-        ((9, 23), (29, 43)),  # model.9-22 复制到 model.24-37
+        ((0, 0), (10, 10)),  # 把 infrared 分支的 backbone 权重复制到 visible 分支的 backbone 意义是？
+        ((1, 4), (11, 14)),
+        ((5, 6), (17, 18)),  # model.5-6 复制到 model.17-18
+        ((5, 6), (19, 20)),
+        ((7, 8), (23, 24)),
+        ((7, 8), (25, 26)),
+
+        ((9, 23), (29, 43)),  # model.9-23 复制到 model.29-43（包括 head）
     ]
 
     # 遍历每个复制范围
@@ -66,7 +67,9 @@ def copy_and_modify_layers(source_model_path, target_model_path, output_model_pa
                             print(f"复制并修改权重: {source_name} -> {target_name}")
                         elif target_module.out_channels > source_module.out_channels:
                             # 如果目标层的输出通道数大于源层，则复制源层的通道
-                            new_weight = torch.cat([source_module.weight] * (target_module.out_channels // source_module.out_channels), dim=0)
+                            new_weight = torch.cat(
+                                [source_module.weight] * (target_module.out_channels // source_module.out_channels),
+                                dim=0)
                             target_module.weight = nn.Parameter(new_weight)
                             print(f"复制并增加通道数: {source_name} -> {target_name}")
                         else:
@@ -81,9 +84,8 @@ def copy_and_modify_layers(source_model_path, target_model_path, output_model_pa
                 print(f"复制权重失败: {source_name} -> {target_name}")
                 continue
 
-
     # 定义要设置为0的层名称
-    zero_layers = ['model.8','model.15','model.21','model.27']  # 示例：将目标模型的 model.38 层的权重设置为0
+    zero_layers = ['model.8', 'model.15', 'model.21', 'model.27']  # 示例：将目标模型的 model.38 层的权重设置为0
 
     for layer_name in zero_layers:
         # 查找目标层
@@ -118,14 +120,3 @@ def copy_and_modify_layers(source_model_path, target_model_path, output_model_pa
     # 保存模型和元数据
     torch.save(metadata, output_model_path)
     print(f"最终模型已成功保存到 {output_model_path}")
-
-
-# 使用示例           Usage Example
-# 如果需要更改模型结构，请仔细阅读本代码，重点修改20行和85行的网络结构层
-# If you need to modify the model structure, please carefully read this code and focus on modifying the network structure layers at line 20 and line 85.
-
-copy_and_modify_layers(
-    source_model_path=r"E:\Download\RGBT_RESULT\M3FD\M3FD_IF-yolo11n-e300-16-pretrained\weights\best.pt",  # input: step 1
-    target_model_path=r"./runs/M3FD/M3FD-yolo11n-RGBT-midfusion-MCF-e300-16-/weights/best.pt", # input: step 2
-    output_model_path='M3FD-yolo11n-RGBT-midfusion-MCF.pt'  # output: step 3
-)
