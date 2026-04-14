@@ -181,3 +181,4 @@ calibration_*.npy
 /ultralytics/cfg/datasets/dota8_MINE.yaml
 /val2.py
 /heatmap_RGBT_test.py
+/vedai_512_obb_yolo.zip
