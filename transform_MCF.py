@@ -16,6 +16,8 @@ def copy_and_modify_layers(source_model_path, target_model_path, output_model_pa
     if isinstance(target_model, dict) and 'model' in target_model:
         target_model = target_model['model']
 
+    target_model.args
+
     # 定义复制的层范围
     copy_ranges = [
         # (源层范围, 目标层范围)
