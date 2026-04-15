@@ -53,60 +53,60 @@ if __name__ == '__main__':
     # del model
     # torch.cuda.empty_cache()
 
-    # # Step 2
-    # model = YOLO('ultralytics/cfg/models/11-RGBT/yolo11-RGBT-midfusion-MCF.yaml')
-    # model.train(data=R'C:\Users\dujin\Documents\Code\YOLOv11-RGBT\datasets\vedai_512_obb_yolo\yolo_obb\vedai_visible.yaml',
-    #             cache=False,
-    #             imgsz=640,
-    #             epochs=1,
-    #             batch=32,
-    #             close_mosaic=0,
-    #             workers=2,
-    #             device='0',
-    #             optimizer='AdamW',  # using SGD
-    #             # resume='', # last.pt path
-    #             # amp=False, # close amp
-    #             fraction=0.01,
-    #             # 仅用 1% 的数据训练, 快速得到一个模型权重模板    Train with only 1% of the data. Quickly obtain a model weight template
-    #             use_simotm="RGBRGB6C",
-    #             channels=6,
-    #             project='runs/vedai',
-    #             name='VEDAI-yolo11n-obb-midfusion-MCF',
-    #             )
-    # del model
-    # torch.cuda.empty_cache()
+    # Step 2
+    model = YOLO('ultralytics/cfg/models/11-RGBT/yolo11-RGBT-midfusion-MCF.yaml')
+    model.train(data=R'C:\Users\dujin\Documents\Code\YOLOv11-RGBT\datasets\vedai_512_obb_yolo\yolo_obb\vedai_visible.yaml',
+                cache=False,
+                imgsz=640,
+                epochs=1,
+                batch=32,
+                close_mosaic=0,
+                workers=2,
+                device='0',
+                optimizer='AdamW',  # using SGD
+                # resume='', # last.pt path
+                # amp=False, # close amp
+                fraction=0.01,
+                # 仅用 1% 的数据训练, 快速得到一个模型权重模板    Train with only 1% of the data. Quickly obtain a model weight template
+                use_simotm="RGBRGB6C",
+                channels=6,
+                project='runs/vedai',
+                name='VEDAI-yolo11n-obb-midfusion-MCF-fixFirstADD',
+                )
+    del model
+    torch.cuda.empty_cache()
 
-    #
+
     # # Step 3     python transform_MCF.py
     # copy_and_modify_layers(
     #     source_model_path=r"C:\Users\dujin\Documents\Code\YOLOv11-RGBT\runs\vedai\VEDAI-yolo11n-obb-infrared-pretrain\weights\best.pt",  # input: step 1
     #     target_model_path=r"C:\Users\dujin\Documents\Code\YOLOv11-RGBT\runs\vedai\VEDAI-yolo11n-obb-midfusion-MCF\weights\best.pt", # input: step 2
     #     output_model_path='M3FD-yolo11n-RGBT-midfusion-MCF.pt'  # output: step 3
     # )
-
-
-
-    # Step 4
-    model = YOLO(r'M3FD-yolo11n-RGBT-midfusion-MCF.pt')
-    model.train(data=R'C:\Users\dujin\Documents\Code\YOLOv11-RGBT\datasets\vedai_512_obb_yolo\yolo_obb\vedai_visible.yaml',
-                cache=False,
-                imgsz=640,
-                epochs=200,
-                batch=32,
-                close_mosaic=5,
-                workers=2,
-                device='0',
-                optimizer='AdamW',  # using AdamW  微调参数请参考论文进行设置，事实上，论文中的参数大概率也不是最佳参数，我们对超参数的选取没有做大量测试。仅做了几组可行的参数设置
-                # For fine-tuning the parameters, please refer to the paper for setting. In fact, the parameters in the paper are probably not the optimal ones. We did not conduct extensive tests on the selection of hyperparameters. We only made a few sets of feasible parameter settings.
-                lr0=0.001,
-                amp=False, # close amp
-                patience=20,
-                freeze=[2, 3, 4, 5, 6, 17, 18, 23, 24, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43],
-                use_simotm="RGBRGB6C",
-                channels=6,
-                project='runs/M3FD',
-                name='M3FD-yolo11n-RGBT-midfusion-MCF-final',
-                )
-    del model
-    torch.cuda.empty_cache()
-
+    #
+    #
+    #
+    # # Step 4
+    # model = YOLO(r'M3FD-yolo11n-RGBT-midfusion-MCF.pt')
+    # model.train(data=R'C:\Users\dujin\Documents\Code\YOLOv11-RGBT\datasets\vedai_512_obb_yolo\yolo_obb\vedai_visible.yaml',
+    #             cache=False,
+    #             imgsz=640,
+    #             epochs=200,
+    #             batch=32,
+    #             close_mosaic=5,
+    #             workers=2,
+    #             device='0',
+    #             optimizer='AdamW',  # using AdamW  微调参数请参考论文进行设置，事实上，论文中的参数大概率也不是最佳参数，我们对超参数的选取没有做大量测试。仅做了几组可行的参数设置
+    #             # For fine-tuning the parameters, please refer to the paper for setting. In fact, the parameters in the paper are probably not the optimal ones. We did not conduct extensive tests on the selection of hyperparameters. We only made a few sets of feasible parameter settings.
+    #             lr0=0.001,
+    #             amp=False, # close amp
+    #             patience=20,
+    #             freeze=[2, 3, 4, 5, 6, 17, 18, 23, 24, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43],
+    #             use_simotm="RGBRGB6C",
+    #             channels=6,
+    #             project='runs/M3FD',
+    #             name='M3FD-yolo11n-RGBT-midfusion-MCF-final',
+    #             )
+    # del model
+    # torch.cuda.empty_cache()
+    #

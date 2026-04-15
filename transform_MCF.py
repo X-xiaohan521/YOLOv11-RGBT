@@ -21,10 +21,9 @@ def copy_and_modify_layers(source_model_path, target_model_path, output_model_pa
     # 定义复制的层范围
     copy_ranges = [
         # (源层范围, 目标层范围)
-        ((0, 4), (2, 6)),  # model.0-4 复制到 model.2-6
+        ((0, 4), (5, 9)),  # model.0-4 复制到 model.2-6
 
-        ((0, 0), (10, 10)),  # 把 infrared 分支的 backbone 权重复制到 visible 分支的 backbone 意义是？
-        ((1, 4), (11, 14)),
+        ((0, 4), (10, 14)),  # 把 infrared 分支的 backbone 权重复制到 visible 分支的 backbone 意义是？
         ((5, 6), (17, 18)),  # model.5-6 复制到 model.17-18
         ((5, 6), (19, 20)),
         ((7, 8), (23, 24)),
