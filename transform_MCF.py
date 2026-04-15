@@ -86,7 +86,7 @@ def copy_and_modify_layers(source_model_path, target_model_path, output_model_pa
                 continue
 
     # 定义要设置为0的层名称
-    zero_layers = ['model.8', 'model.15', 'model.21', 'model.27']  # 示例：将目标模型的 model.38 层的权重设置为0
+    zero_layers = ['model.3','model.15','model.21','model.27']
 
     for layer_name in zero_layers:
         # 查找目标层
