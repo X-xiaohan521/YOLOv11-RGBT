@@ -104,16 +104,16 @@ if __name__ == '__main__':
 
     # Step 4 (transform_MCF.py)
     copy_and_modify_layers(
-        infrared_backbone_path=r"C:\Users\dujin\Documents\Code\YOLOv11-RGBT\runs\vedai\VEDAI-yolo11n-obb-infrared-pretrain",
-        visible_backbone_path=r"C:\Users\dujin\Documents\Code\YOLOv11-RGBT\runs\vedai\VEDAI-yolo11n-obb-visible-pretrain",
-        mcf_skeleton_path=r"C:\Users\dujin\Documents\Code\YOLOv11-RGBT\runs\vedai\VEDAI-yolo11n-obb-midfusion-MCF-fixFirstADD",
-        output_model_path=r"VEDAI-yolo11n-RGBT-midfusion-MCF-fixFirstADD-dualBackbone.pt"
+        infrared_backbone_path=r"/root/autodl-tmp/YOLOv11-RGBT-master/runs/vedai/VEDAI-yolo11n-obb-infrared-pretrain/weights/best.pt",
+        visible_backbone_path=r"/root/autodl-tmp/YOLOv11-RGBT-master/runs/vedai/VEDAI-yolo11n-obb-visible-pretrain/weights/best.pt",
+        mcf_skeleton_path=r"/root/autodl-tmp/YOLOv11-RGBT-master/runs/vedai/VEDAI-yolo11n-obb-midfusion-MCF-fixFirstADD/weights/best.pt",
+        output_model_path=r"VEDAI-yolo11n-obb-midfusion-MCF-fixFirstADD-dualBackbone.pt"
     )
 
 
     # Step 5 (Final training)
-    model = YOLO(r'VEDAI-yolo11n-RGBT-midfusion-MCF-fixFirstADD-dualBackbone.pt')
-    model.train(data=R'C:\Users\dujin\Documents\Code\YOLOv11-RGBT\datasets\vedai_512_obb_yolo\yolo_obb\vedai_visible.yaml',
+    model = YOLO(r'VEDAI-yolo11n-obb-midfusion-MCF-fixFirstADD-dualBackbone.pt')
+    model.train(data=R'/root/autodl-tmp/YOLOv11-RGBT-master/datasets/yolo_obb/vedai_visible.yaml',
                 cache=False,
                 imgsz=640,
                 epochs=200,
@@ -125,13 +125,12 @@ if __name__ == '__main__':
                 # For fine-tuning the parameters, please refer to the paper for setting. In fact, the parameters in the paper are probably not the optimal ones. We did not conduct extensive tests on the selection of hyperparameters. We only made a few sets of feasible parameter settings.
                 lr0=0.001,
                 amp=False, # close amp
-                patience=20,
-                freeze=[2, 3, 4, 5, 6, 17, 18, 23, 24, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43],
+                patience=50,
+                freeze=[5, 6, 7, 8, 9, 17, 18, 23, 24, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43],
                 use_simotm="RGBRGB6C",
                 channels=6,
                 project='runs/vedai',
-                name='VEDAI-yolo11n-RGBT-midfusion-MCF-final',
+                name='VEDAI-yolo11n-RGBT-midfusion-MCF-dualBackbone-final',
                 )
     del model
     torch.cuda.empty_cache()
-

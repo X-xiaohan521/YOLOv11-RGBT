@@ -94,7 +94,8 @@ def copy_and_modify_layers(infrared_backbone_path, visible_backbone_path, mcf_sk
         ],
         [
             # (可见光范围 -> MCF骨架范围)
-            ((0, 4), (10, 14)),
+            ((0, 0), (10, 10)),
+            ((1, 4), (11, 14)),
             ((5, 6), (19, 20)),
             ((7, 8), (25, 26)),
         ]
