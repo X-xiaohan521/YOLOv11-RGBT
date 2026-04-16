@@ -78,7 +78,7 @@ if __name__ == '__main__':
     torch.cuda.empty_cache()
 
 
-    # Step 3
+    # Step 3 (MCF skeleton)
     model = YOLO('ultralytics/cfg/models/11-RGBT/yolo11-RGBT-midfusion-MCF.yaml')
     model.train(data=R'C:\Users\dujin\Documents\Code\YOLOv11-RGBT\datasets\vedai_512_obb_yolo\yolo_obb\vedai_visible.yaml',
                 cache=False,
@@ -102,17 +102,17 @@ if __name__ == '__main__':
     torch.cuda.empty_cache()
 
 
-    # Step 4     python transform_MCF.py
+    # Step 4 (transform_MCF.py)
     copy_and_modify_layers(
-        source_model_path=r"C:\Users\dujin\Documents\Code\YOLOv11-RGBT\runs\vedai\VEDAI-yolo11n-obb-infrared-pretrain\weights\best.pt",  # input: step 1
-        target_model_path=r"C:\Users\dujin\Documents\Code\YOLOv11-RGBT\runs\vedai\VEDAI-yolo11n-obb-midfusion-MCF-fixFirstADD\weights\best.pt", # input: step 2
-        output_model_path='VEDAI-yolo11n-RGBT-midfusion-MCF-fixFirstADD.pt'  # output: step 3
+        infrared_backbone_path=r"C:\Users\dujin\Documents\Code\YOLOv11-RGBT\runs\vedai\VEDAI-yolo11n-obb-infrared-pretrain",
+        visible_backbone_path=r"C:\Users\dujin\Documents\Code\YOLOv11-RGBT\runs\vedai\VEDAI-yolo11n-obb-visible-pretrain",
+        mcf_skeleton_path=r"C:\Users\dujin\Documents\Code\YOLOv11-RGBT\runs\vedai\VEDAI-yolo11n-obb-midfusion-MCF-fixFirstADD",
+        output_model_path=r"VEDAI-yolo11n-RGBT-midfusion-MCF-fixFirstADD-dualBackbone.pt"
     )
 
 
-
-    # Step 5
-    model = YOLO(r'VEDAI-yolo11n-RGBT-midfusion-MCF-fixFirstADD.pt')
+    # Step 5 (Final training)
+    model = YOLO(r'VEDAI-yolo11n-RGBT-midfusion-MCF-fixFirstADD-dualBackbone.pt')
     model.train(data=R'C:\Users\dujin\Documents\Code\YOLOv11-RGBT\datasets\vedai_512_obb_yolo\yolo_obb\vedai_visible.yaml',
                 cache=False,
                 imgsz=640,

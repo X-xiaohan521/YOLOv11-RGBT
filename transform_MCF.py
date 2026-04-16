@@ -55,6 +55,26 @@ def copy_weights(source_layers, target_layers):
             print(f"复制权重失败: {source_name} -> {target_name}")
             continue
 
+def set_zero(target_model, zero_layers):
+    for layer_name in zero_layers:
+        # 查找目标层
+        target_layer = None
+        for name, module in target_model.named_modules():
+            if name == layer_name:
+                target_layer = module
+                break
+
+        # 确保找到目标层
+        assert target_layer is not None, f"未找到目标层 {layer_name}"
+        # print(type(target_layer))
+        # 将目标层的权重设置为0
+        if isinstance(target_layer, nn.Conv2d):
+            nn.init.zeros_(target_layer.weight)
+            if target_layer.bias is not None:
+                nn.init.zeros_(target_layer.bias)
+            print(f"将层 {layer_name} 的权重设置为0")
+            print("2D Conv Weights (sum):", target_layer.weight.sum().item())
+
 def copy_and_modify_layers(infrared_backbone_path, visible_backbone_path, mcf_skeleton_path, output_model_path):
 
     # 加载三个输入模型
@@ -80,37 +100,23 @@ def copy_and_modify_layers(infrared_backbone_path, visible_backbone_path, mcf_sk
         ]
     ]
 
-    # 遍历每个复制范围
+    # 定义要设置为0的层名称
+    zero_layers = ['model.3', 'model.15', 'model.21', 'model.27']
+
+    # 遍历每个复制范围，拷贝权重
     for (infrared_start, infrared_end), (mcf_start, mcf_end) in copy_ranges[0]:
         infrared_layers = get_layers(infrared_backbone, infrared_start, infrared_end)
         mcf_layers = get_layers(mcf_skeleton, mcf_start, mcf_end)
 
+        copy_weights(infrared_layers, mcf_layers)
+
     for (visible_start, visible_end), (mcf_start, mcf_end) in copy_ranges[1]:
         visible_layers = get_layers(visible_backbone, visible_start, visible_end)
+        mcf_layers = get_layers(mcf_skeleton, mcf_start, mcf_end)
 
+        copy_weights(visible_layers, mcf_layers)
 
-
-    # 定义要设置为0的层名称
-    zero_layers = ['model.3','model.15','model.21','model.27']
-
-    for layer_name in zero_layers:
-        # 查找目标层
-        target_layer = None
-        for name, module in target_model.named_modules():
-            if name == layer_name:
-                target_layer = module
-                break
-
-        # 确保找到目标层
-        assert target_layer is not None, f"未找到目标层 {layer_name}"
-        # print(type(target_layer))
-        # 将目标层的权重设置为0
-        if isinstance(target_layer, nn.Conv2d):
-            nn.init.zeros_(target_layer.weight)
-            if target_layer.bias is not None:
-                nn.init.zeros_(target_layer.bias)
-            print(f"将层 {layer_name} 的权重设置为0")
-            print("2D Conv Weights (sum):", target_layer.weight.sum().item())
+    set_zero(mcf_skeleton, zero_layers)
 
     # 创建元数据字典
     metadata = {
@@ -120,8 +126,9 @@ def copy_and_modify_layers(infrared_backbone_path, visible_backbone_path, mcf_sk
         'docs': 'https://docs.ultralytics.com',
         'epoch': 300,
         'best_fitness': None,
-        'model': target_model
+        'model': mcf_skeleton
     }
+
     # print(target_model)
     # 保存模型和元数据
     torch.save(metadata, output_model_path)
